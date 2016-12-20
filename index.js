@@ -162,7 +162,7 @@ controller.on('ambient', function ambient(bot, message) {
                 console.log(insult);
                 bot.reply(message, {
                     username: 'bingo',
-                    text: `Sorry, that's not a sentence: ${insult}`,
+                    text: `Sorry <@${message.user}>, that's not a sentence: ${insult}`,
                     icon_emoji: `:anton:`
                 })
             })
