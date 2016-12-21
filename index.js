@@ -19,7 +19,7 @@ var Botkit = require('botkit'),
             //include "log: false" to disable logging
             //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
     }),
-    sentenceMatcher = new RegExp(`((?:[A-Z]\.|[^\.!?])+)[\.!?]`, "g");
+    sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g;
 
 //---------------------------
 // Global functions
@@ -40,14 +40,28 @@ function makeRegex(s) {
     return new RegExp(beginWordBreak + safeRegex(s) + endWordBreak, "i")
 }
 
-function containsSentence(message) {
-    // Enforce minimum word count
-    if (message.split(/\s+/).length < 2) {
-        return false;
-    }
+/**
+ * Returns -1 if input message does not conatin any sentence.
+ * Returns  0 if input message contains at least one sentence which is to short.
+ * Returns  1 if input message is valid. 
+ */
+function containsValidSentences(message) {
     // Enforce the syntactic of a sentence
     let sentences = message.match(sentenceMatcher);
-    return sentences ? true : false;
+    // Enforce minimum word count in any matched sentence
+    if (sentences) {
+        for (let s = 0; s < sentences.length; s++) {
+            if (sentences[s].split(/\s+/).length < 2) {
+                if (sentences.length > 1) {
+                    return 0;
+                }
+                return -1;
+            }
+        }
+        return 1;
+    } else {
+        return -1;
+    }
 }
 
 function addWord(toAdd, addedBy) {
@@ -157,12 +171,19 @@ controller.on('ambient', function ambient(bot, message) {
     if (message.type == 'message') {
 
         // validate message
-        if (!containsSentence(message.text)) {
+        let valid = containsValidSentences(message.text)
+        if (valid < 1) {
             insultgen(function (insult) {
-                console.log(insult);
+                let replyText = `Sorry <@${message.user}>, `;
+                if (valid === 0) {
+                    replyText += `something in your message seems to be not a sentence: ${insult}`;
+                } else {
+                    replyText += `that's not a sentence: ${insult}`;
+                }
+                console.log(replyText);
                 bot.reply(message, {
                     username: 'bingo',
-                    text: `Sorry <@${message.user}>, that's not a sentence: ${insult}`,
+                    text: replyText,
                     icon_emoji: `:anton:`
                 })
             })
@@ -246,4 +267,4 @@ controller.spawn({
 loadWords();
 
 // Hack: Make functions available for testing
-exports.containsSentence = containsSentence;
+exports.containsValidSentences = containsValidSentences;
