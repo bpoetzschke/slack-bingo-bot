@@ -7,7 +7,7 @@ var Botkit = require('botkit'),
     readFile = Promise.promisify(require("fs").readFile),
     emoji = "boom",
     react = require('./react'),
-    insultgen = require('insultgenerator'),
+    insult = require('./insult'),
     noop = () => undefined,
     PERSIST_BINGO_WORDS = process.env.PERSIST_BINGO_WORDS && process.env.PERSIST_BINGO_WORDS != 0,
     botUid, words = [],
@@ -19,7 +19,7 @@ var Botkit = require('botkit'),
             //include "log: false" to disable logging
             //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
     }),
-    sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g;
+    sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
 
 //---------------------------
 // Global functions
@@ -173,20 +173,20 @@ controller.on('ambient', function ambient(bot, message) {
         // validate message
         let valid = containsValidSentences(message.text)
         if (valid < 1) {
-            insultgen(function (insult) {
-                let replyText = `Sorry <@${message.user}>, `;
-                if (valid === 0) {
-                    replyText += `something in your message seems to be not a sentence: ${insult}`;
-                } else {
-                    replyText += `that's not a sentence: ${insult}`;
-                }
-                console.log(replyText);
-                bot.reply(message, {
-                    username: 'bingo',
-                    text: replyText,
-                    icon_emoji: `:anton:`
-                })
+            let insulttext = insult.generate(message.user);
+            let replyText = `Sorry `;
+            if (valid === 0) {
+                replyText += `something in your message seems to be not a sentence: ${insulttext}`;
+            } else {
+                replyText += `that's not a sentence: ${insulttext}`;
+            }
+            console.log(replyText);
+            bot.reply(message, {
+                username: 'bingo',
+                text: replyText,
+                icon_emoji: `:anton:`
             })
+            
         } else {
 
             //search text for bingo word
