@@ -87,17 +87,6 @@ function addWord(toAdd, addedBy) {
     }).catch(noop)
 }
 
-function introduce(bot, message) {
-    react(bot, 'thumbsup', message, noop)
-    bot.reply(message, {
-        text: 'Let\'s play BINGO:exclamation: Be the first to send any of my secret magic words and win:trophy:\n' +
-            `Suggest secret words by sending <@${botUid}> a private message:love_letter: starting with *add*\n` +
-            'e.g. `add :cake: "big data" landslide` to add :cake:, landslide and big data as bingo words',
-        icon_emoji: `:${emoji}:`,
-        username: 'bingo'
-    });
-}
-
 function attachmentGif(w) {
     return {
         fallback: `There was a GIF here: ${w.word}`,
@@ -129,45 +118,22 @@ function loadWords() {
     });
 }
 
-function exitHandler() {
-    persistence.save(words, foundWords, function (err) {
-        if (err) {
-            throw err;
-        } else {
-            console.log('Wordlist and found words saved successfully.');
-            process.exit(0);
-        }
+function introduce(bot, message) {
+    react(bot, 'thumbsup', message, noop)
+    bot.reply(message, {
+        text: 'Let\'s play BINGO:exclamation: Be the first to send any of my secret magic words and win:trophy:\n' +
+            `Suggest secret words by sending <@${botUid}> a private message:love_letter: starting with *add*\n` +
+            'e.g. `add :cake: "big data" landslide` to add :cake:, landslide and big data as bingo words',
+        icon_emoji: `:${emoji}:`,
+        username: 'bingo'
     });
-    if (typeof bot.destroy === 'function') {
-        bot.destroy(bot);
-    }
 }
 
 //---------------------------
-// Event handler
+// Business logic functions (can be extracted as module later on)
 //---------------------------
 
-controller.hears('add', ['direct_message'], (bot, message) => {
-    //We need to extract single words and quoted words
-    message.text.match(/(?:"([^"]+)"|([^"\s]+))/g).splice(1).forEach(w => {
-        if (addWord(w, message.user)) {
-            bot.reply(message, {
-                text: 'Added ' + w,
-                icon_emoji: `:${emoji}:`
-            });
-            react(bot, 'thumbsup', message, noop)
-        }
-    })
-})
-
-controller.hears('cheat', ['direct_message'], (bot, message) => {
-    react(bot, 'wink', message, noop)
-    bot.reply(message, words.map(w => w.word).join(', '))
-})
-
-controller.hears(['hello', 'hi', 'introduce'], ['direct_message', 'direct_mention'], introduce)
-
-controller.on('ambient', function ambient(bot, message) {
+function handleAmbient(bot, message) {
     if (message.type == 'message') {
 
         // validate message
@@ -244,11 +210,53 @@ controller.on('ambient', function ambient(bot, message) {
             }
         }
     }
-})
+} 
 
-controller.on('bot_channel_join', (b, d) => {
-    introduce(b, d)
-})
+function handleAdd(bot, message) {
+    //We need to extract single words and quoted words
+    message.text.match(/(?:"([^"]+)"|([^"\s]+))/g).splice(1).forEach(w => {
+        if (addWord(w, message.user)) {
+            bot.reply(message, {
+                text: 'Added ' + w,
+                icon_emoji: `:${emoji}:`
+            });
+            react(bot, 'thumbsup', message, noop)
+        }
+    })
+}
+
+function handleCheat(bot, message) {
+    react(bot, 'wink', message, noop)
+    bot.reply(message, words.map(w => w.word).join(', '))
+}
+
+function exitHandler() {
+    persistence.save(words, foundWords, function (err) {
+        if (err) {
+            throw err;
+        } else {
+            console.log('Wordlist and found words saved successfully.');
+            process.exit(0);
+        }
+    });
+    if (typeof bot.destroy === 'function') {
+        bot.destroy(bot);
+    }
+}
+
+//---------------------------
+// Event handler
+//---------------------------
+
+controller.hears('add', ['direct_message'], handleAdd)
+
+controller.hears('cheat', ['direct_message'], handleCheat)
+
+controller.hears(['hello', 'hi', 'introduce'], ['direct_message', 'direct_mention'], introduce)
+
+controller.on('ambient', handleAmbient)
+
+controller.on('bot_channel_join', introduce)
 
 //---------------------------
 
@@ -268,3 +276,4 @@ loadWords();
 
 // Hack: Make functions available for testing
 exports.containsValidSentences = containsValidSentences;
+exports.handleAmbient = handleAmbient

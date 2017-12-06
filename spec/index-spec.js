@@ -1,6 +1,6 @@
 var index = require("../index");
 
-describe("Bingos accepting behaviour", function () {
+describe("Bingos message validation behaviour", function () {
   it("should accept full sentences", function () {
     expect(index.containsValidSentences("This is a sentence.")).toBe(1);
     expect(index.containsValidSentences("Sentence.")).toBe(-1);
@@ -10,4 +10,23 @@ describe("Bingos accepting behaviour", function () {
     expect(index.containsValidSentences("This is a text. But it has another sentence.")).toBe(1);
     expect(index.containsValidSentences("Bingo Dredd is the law. Valerio. MacGyver. Steven Seagal. Beer. Kaka in der Kopf.")).toBe(0);
   });
-});    
+});  
+
+describe("Bingos ambient accepting behaviour", function() {
+  it("should insult on wrong sentences", function() {
+    let testMsg = {
+      "type": "message",
+      "text": "blue cheese won't fit",
+      "user": "testUser"
+    };
+    let bot = {
+      reply: (msg, res) => {
+        expect(msg).toBe(testMsg);
+        expect(res.username).toBe('bingo');
+        expect(res.text).toContain('Sorry that\'s not a sentence:')
+        expect(res.icon_emoji).toBe(':anton:')
+      }
+    };
+    index.handleAmbient(bot, testMsg);
+  })
+})
