@@ -139,20 +139,27 @@ function handleAmbient(bot, message) {
         // validate message
         let valid = containsValidSentences(message.text)
         if (valid < 1) {
-            let insulttext = insult.generate(message.user);
-            let replyText = `Sorry `;
-            if (valid === 0) {
-                replyText += `something in your message seems to be not a sentence: ${insulttext}`;
-            } else {
-                replyText += `that's not a sentence: ${insulttext}`;
+
+            bot.api.users.info({user:message.user}, (err, res) => {
+                let username = 'Douchbag'
+                if (!err) {
+                    username = response["user"]["name"]
+                }
+                
+                let insulttext = insult.generate(message.username);
+                let replyText = `Sorry `;
+                if (valid === 0) {
+                    replyText += `something in your message seems to be not a sentence: ${insulttext}`;
+                } else {
+                    replyText += `that's not a sentence: ${insulttext}`;
+                }
+                console.log(replyText);
+                bot.reply(message, {
+                    username: 'bingo',
+                    text: replyText,
+                    icon_emoji: `:anton:`
+                })
             }
-            console.log(replyText);
-            bot.reply(message, {
-                username: 'bingo',
-                text: replyText,
-                icon_emoji: `:anton:`
-            })
-            
         } else {
 
             //search text for bingo word
