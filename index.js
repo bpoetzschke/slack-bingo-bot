@@ -143,10 +143,10 @@ function handleAmbient(bot, message) {
             bot.api.users.info({user:message.user}, (err, res) => {
                 let username = 'Douchbag'
                 if (!err) {
-                    username = response["user"]["name"]
+                    username = res.user.name
                 }
                 
-                let insulttext = insult.generate(message.username);
+                let insulttext = insult.generate(username);
                 let replyText = `Sorry `;
                 if (valid === 0) {
                     replyText += `something in your message seems to be not a sentence: ${insulttext}`;
@@ -159,7 +159,7 @@ function handleAmbient(bot, message) {
                     text: replyText,
                     icon_emoji: `:anton:`
                 })
-            }
+            })
         } else {
 
             //search text for bingo word

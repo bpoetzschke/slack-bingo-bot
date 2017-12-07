@@ -17,14 +17,27 @@ describe("Bingos ambient accepting behaviour", function() {
     let testMsg = {
       "type": "message",
       "text": "blue cheese won't fit",
-      "user": "testUser"
+      "user": "12345"
     };
     let bot = {
+      api: {
+        users: {
+          info: (userIdObj, cb) => {
+            expect(userIdObj.user).toBe("12345");
+            console.log(cb);
+            cb(null, {
+              user: {
+                name: "TestMac"
+              }
+            });
+          }
+        }
+      },
       reply: (msg, res) => {
         expect(msg).toBe(testMsg);
         expect(res.username).toBe('bingo');
-        expect(res.text).toContain('Sorry that\'s not a sentence:')
-        expect(res.icon_emoji).toBe(':anton:')
+        expect(res.text).toContain('Sorry that\'s not a sentence:');
+        expect(res.icon_emoji).toBe(':anton:');
       }
     };
     index.handleAmbient(bot, testMsg);
