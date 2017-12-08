@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bluebird": "^3.2.2",
-    "botkit": "0.4",
+    "bluebird": "^3.5.1",
+    "botkit": "^0.4.10",
     "request-promise": "^2.0.0"
   },
   "devDependencies": {
-     "jasmine-node": "^1.14.5"
+    "jasmine-node": "^1.14.5"
   }
 }
