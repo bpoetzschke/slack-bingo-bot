@@ -19,7 +19,7 @@ var Botkit = require('botkit'),
             //include "log: false" to disable logging
             //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
     }),
-    sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
+    sentenceMatcher = /((\b[\w\s,'_-]+)[:…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
 
 //---------------------------
 // Global functions
@@ -46,8 +46,10 @@ function makeRegex(s) {
  * Returns  1 if input message is valid. 
  */
 function containsValidSentences(message) {
+    //first replace all emoji's to not confuse sentence mathcer
+    let replacedMsg = message.replace(/\:(.*?)\:/g, emoji);
     // Enforce the syntactic of a sentence
-    let sentences = message.match(sentenceMatcher);
+    let sentences = replacedMsg.match(sentenceMatcher);
     // Enforce minimum word count in any matched sentence
     if (sentences) {
         for (let s = 0; s < sentences.length; s++) {
@@ -143,7 +145,7 @@ function handleAmbient(bot, message) {
             bot.api.users.info({user:message.user}, (err, res) => {
                 let username = 'Douchbag'
                 if (!err) {
-                    username = res.user.name
+                    username = `<@${message.user}>`;
                 }
                 
                 let insulttext = insult.generate(username);
