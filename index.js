@@ -19,7 +19,7 @@ var Botkit = require('botkit'),
             //include "log: false" to disable logging
             //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
     }),
-    sentenceMatcher = /((\b[\w\s,'_-]+)[:…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
+    sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
 
 //---------------------------
 // Global functions
@@ -47,7 +47,7 @@ function makeRegex(s) {
  */
 function containsValidSentences(message) {
     //first replace all emoji's to not confuse sentence mathcer
-    let replacedMsg = message.replace(/\:(.*?)\:/g, emoji);
+    let replacedMsg = message.replace(/\:(.*?)\:/g, "emoji");
     // Enforce the syntactic of a sentence
     let sentences = replacedMsg.match(sentenceMatcher);
     // Enforce minimum word count in any matched sentence
