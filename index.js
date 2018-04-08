@@ -14,10 +14,8 @@ var Botkit = require('botkit'),
     foundWords = [],
     persistence = require('./persistence'),
     bot, controller = Botkit.slackbot({
+        retry: Infinity,
         logLevel: 3
-            //debug: true
-            //include "log: false" to disable logging
-            //or a "logLevel" integer from 0 to 7 to adjust logging verbosity
     }),
     sentenceMatcher = /((\b[\w\s,'_-]+)[…\.?!]+)/g; // Verify at https://regex101.com/r/t4OJoa/1
 
