@@ -1,37 +1,32 @@
-var index = require("../index"),
-    validator = require('../validator');
-
-describe("Bingos message validation behaviour", function () {
-  it("should accept full sentences", function () {
-    expect(validator.containsValidSentences("This is a sentence.")).toBe(1);
-    expect(validator.containsValidSentences("Sentence.")).toBe(-1);
-    expect(validator.containsValidSentences("blue cheese won't fit")).toBe(-1);
-    expect(validator.containsValidSentences(":cow: test.")).toBe(1);
-  });
-  it("should accept multiple sentences", function () {
-    expect(validator.containsValidSentences("This is a text. But it has another sentence.")).toBe(1);
-    expect(validator.containsValidSentences("Bingo Dredd is the law. Valerio. MacGyver. Steven Seagal. Beer. Kaka in der Kopf.")).toBe(0);
-  });
-});  
+var index = require("../index");
 
 describe("Bingos ambient accepting behaviour", function() {
   it("should insult on wrong sentences", function() {
     let testMsg = {
       "type": "message",
       "text": "blue cheese won't fit",
-      "user": "12345"
+      "user": "12345",
+      "ts": 12345,
+      "channel": "some_channel"
     };
     let bot = {
       api: {
         users: {
           info: (userIdObj, cb) => {
             expect(userIdObj.user).toBe("12345");
-            console.log(cb);
             cb(null, {
               user: {
                 name: "TestMac"
               }
             });
+          }
+        },
+        reactions: {
+          add: (reaction, callback) => {
+            expect(reaction).toBeDefined();
+            expect(reaction.name).toBe("enton");
+            expect(reaction.channel).toBe(testMsg.channel);
+            expect(reaction.timestamp).toBe(testMsg.ts);
           }
         }
       },
