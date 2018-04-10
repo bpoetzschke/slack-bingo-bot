@@ -79,16 +79,8 @@ function handleAmbient(bot, message) {
                 return false;
             });
 
-            wordManager.tickWords(found);
-
             if (found.length) {
-                found.map(f => {
-                    wordManager.markWordAsFound({
-                        word: f.word,
-                        usr: message.user,
-                        regExp: f.regExp
-                    });
-                });
+                wordManager.tickWords(found, message.user);
 
                 let foundStr = joinAndCommas(found.map(w => w.word))
                 react(bot, emoji, message, noop)

@@ -84,19 +84,16 @@ var wordManager = (function() {
         getFoundWords: function() {
             return foundWords;
         },
-    
-        markWordAsFound: function(word) {
-            //somehow we try to insert two occourences of the found word but one has a undefined user. so we just don't insert the one without user defined.
-            if(!(word.user === undefined)) {
-                foundWords.push(word);
-            }
-        },
 
-        tickWords: function(wordsToTick) {
+        tickWords: function(wordsToTick, user) {
             wordsToTick.forEach( w => {
                 if (words.indexOf(w) >= 0) {
                     words.splice(words.indexOf(w), 1);
-                    foundWords.push(w);
+                    foundWords.push({
+                        word: w.word,
+                        usr: user,
+                        regExp: w.regExp
+                    });
                 }
             });
         },
