@@ -6,9 +6,10 @@ var instance = null,
     persistence = require('./persistence'),
     readFile = Promise.promisify(require("fs").readFile),
     foundWords = [],
-    words = [];
+    words = [],
+    INITIALIZED = false,
+    PERSIST_BINGO_WORDS = process.env.PERSIST_BINGO_WORDS && process.env.PERSIST_BINGO_WORDS != 0;
 
-var wordManager = (function() {
     function safeRegex(s) {
         //  . [ ] \ * + { } ? -
         return s.replace(/[\.\[\]\\*+{}?\-]/g, x => '\\' + x)
@@ -71,43 +72,39 @@ var wordManager = (function() {
     }
 
     function init() {
-        loadWords();
+        if (!INITIALIZED) {
+            loadWords();
+            INITIALIZED = true;
+        } else {
+            console.log("WordManager is already initialized");
+        }
     }
 
-    init();
-
-    return {
-        getWords: function() {
-            return words;
-        },
+    function getWords() {
+        return words;
+    }
     
-        getFoundWords: function() {
-            return foundWords;
-        },
-
-        tickWords: function(wordsToTick, user) {
-            wordsToTick.forEach( w => {
-                if (words.indexOf(w) >= 0) {
-                    words.splice(words.indexOf(w), 1);
-                    foundWords.push({
-                        word: w.word,
-                        usr: user,
-                        regExp: w.regExp
-                    });
-                }
-            });
-        },
-    }
-});
-
-function getInstance() {
-    if (!instance) {
-        instance = wordManager();
+    function getFoundWords() {
+        return foundWords;
     }
 
-    return instance;
-}
+    function tickWords(wordsToTick, user) {
+        wordsToTick.forEach( w => {
+            if (words.indexOf(w) >= 0) {
+                words.splice(words.indexOf(w), 1);
+                foundWords.push({
+                    word: w.word,
+                    usr: user,
+                    regExp: w.regExp
+                });
+            }
+        });
+    }
+
 
 module.exports = {
-    getInstance: getInstance,
+    init,
+    getWords,
+    getFoundWords,
+    tickWords,
 };

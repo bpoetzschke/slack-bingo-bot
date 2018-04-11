@@ -1,4 +1,4 @@
-var index = require("../index");
+var index = require("../bot");
 
 describe("Bingos ambient accepting behaviour", function() {
   it("should insult on wrong sentences", function() {
