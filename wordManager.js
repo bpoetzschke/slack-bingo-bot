@@ -4,7 +4,7 @@ var instance = null,
     Promise = require('bluebird'),
     giphy = require('./giphy'),
     persistence = require('./persistence'),
-    readFile = Promise.promisify(require("fs").readFile),
+    fs = require('./fs'),
     foundWords = [],
     words = [],
     INITIALIZED = false,
@@ -62,7 +62,7 @@ var instance = null,
                 });
             } else {
                 console.log("Load words from initial.txt");
-                readFile('initial.txt', 'utf8').then(txt => {
+                fs.readFile('initial.txt', 'utf8').then(txt => {
                     Promise.map(txt.split(/[\n\r]+/), w => addWord(w), {
                         concurrency: 5
                     })
