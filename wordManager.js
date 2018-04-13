@@ -72,12 +72,7 @@ var instance = null,
     }
 
     function init() {
-        if (!INITIALIZED) {
-            loadWords();
-            INITIALIZED = true;
-        } else {
-            console.log("WordManager is already initialized");
-        }
+        loadWords();
     }
 
     function getWords() {
@@ -89,15 +84,21 @@ var instance = null,
     }
 
     function tickWords(wordsToTick, user) {
-        wordsToTick.forEach( w => {
-            if (words.indexOf(w) >= 0) {
-                words.splice(words.indexOf(w), 1);
+        words = words.filter(w => {
+            let idx = wordsToTick.indexOf(w.word);
+            if(idx >= 0) {
+                console.log(`Tick word: ${w}`);
                 foundWords.push({
                     word: w.word,
                     usr: user,
-                    regExp: w.regExp
+                    regExp: w.regExp,
+                    addedBy: w.addedBy
                 });
+
+                return false;
             }
+
+            return true;
         });
     }
 

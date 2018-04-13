@@ -88,7 +88,7 @@ function handleValidMessage(bot, message) {
     let found = []
     wordManager.getWords().filter(w => {
         if (w.addedBy != message.user && w.regExp.test(message.text)) {
-            found.push(w);
+            found.push(w.word);
         }
         return false
     })
