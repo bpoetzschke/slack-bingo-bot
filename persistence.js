@@ -1,7 +1,7 @@
 "use strict";
 
-var fs = require('fs')
-    , fileName = 'save.json';
+var fs = require('fs'),
+    fileName = 'save.json';
 
 function save(remainingWords, bingoedWords, callback) {
     var out = {

@@ -87,7 +87,6 @@ var instance = null,
         words = words.filter(w => {
             let idx = wordsToTick.indexOf(w.word);
             if(idx >= 0) {
-                console.log(`Tick word: ${w}`);
                 foundWords.push({
                     word: w.word,
                     usr: user,
