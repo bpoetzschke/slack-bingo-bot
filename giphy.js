@@ -25,7 +25,7 @@ function randomGif(q) {
 function retryFirstWord(f) {
     return (q) =>
         f(q).then(data => {
-            if (data.length || data.fixed_height_downsampled_url)
+            if (data || data.length || data.fixed_height_downsampled_url)
                 return data
             if (q.indexOf(' ') > 3) {
                 // If growth hack returns no results, try growth

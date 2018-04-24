@@ -14,6 +14,8 @@ module.exports = function (bot, emoji, message, cb) {
             console.error(err)
             return cb(err)
         }
-        cb(null)
+        if (typeof cb === 'function') {
+            cb(null)
+        }
     })
 }
