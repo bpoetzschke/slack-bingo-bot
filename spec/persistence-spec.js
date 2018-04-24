@@ -7,15 +7,15 @@ var persistence = require('../persistence'),
 describe('persistence', function () {
     it('should load file save.json when existing', function(done) {
         let readFileStub = sinon.stub(fs, "readFile");
-        let exepctedFileContent = {
+        let expectedFileContent = {
             remainingWords: ["toast", "hawai", "alaska"],
             bingoedWords: ["already", "bingoed"]
         };
 
         persistence.load((remainingWords, foundWords, err)=>{
             expect(err).toBeUndefined();
-            expect(remainingWords).toEqual(exepctedFileContent.remainingWords);
-            expect(foundWords).toEqual(exepctedFileContent.bingoedWords);
+            expect(remainingWords).toEqual(expectedFileContent.remainingWords);
+            expect(foundWords).toEqual(expectedFileContent.bingoedWords);
 
             done();
         });
@@ -25,12 +25,12 @@ describe('persistence', function () {
         expect(args[1]).toBe("utf8");
         expect(typeof args[2]).toBe("function");
 
-        args[2](null, JSON.stringify(exepctedFileContent));
+        args[2](null, JSON.stringify(expectedFileContent));
 
         readFileStub.restore();
     });
 
-    it('should return error when trying to not existing file', function(done) {
+    it('should return error when trying to read not existing file', function(done) {
         let readFileStub = sinon.stub(fs, "readFile");
         let testErr = new Error('I am a test error :)');
 
