@@ -88,7 +88,7 @@ function handleValidMessage(bot, message) {
     let found = []
     wordManager.getWords().filter(w => {
         if (w.addedBy != message.user && w.regExp.test(message.text)) {
-            found.push(w.word);
+            found.push(w);
         }
         return false
     })
@@ -102,14 +102,12 @@ function handleValidMessage(bot, message) {
     });
 
     if (found.length) {
-        wordManager.tickWords(found, message.user);
-
+        wordManager.tickWords(found.map(w => w.word), message.user);
         let foundStr = joinAndCommas(found.map(w => w.word))
         react(bot, emoji, message)
-        let poser = found.map(w => w.addedBy ? `<@${w.addedBy}>` : '').join(' ')
         bot.reply(message, {
             username: 'bingo',
-            text: `Bingo! <@${message.user}> said ${foundStr}! There are ${wordManager.getWords().length || "no"} bingo words left to discover! ${poser}`,
+            text: `Bingo! <@${message.user}> said ${foundStr}! There are ${wordManager.getWords().length || "no"} bingo words left to discover!`,
             icon_emoji: `:${emoji}:`,
             attachments: found.filter(w => w.gif).map(attatchGif)
         });
