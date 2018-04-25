@@ -3,7 +3,11 @@ var index = require("../bot");
 describe("Bingos ambient accepting behaviour", function() {
   it("should insult on wrong sentences", function() {
     let testMsg = {
-      "type": "message",
+      "type": "ambient",
+      "raw_message": {
+        "type": "message"
+      },
+      "message_type": "message",
       "text": "blue cheese won't fit",
       "user": "12345",
       "ts": 12345,

@@ -39,8 +39,7 @@ function introduce(bot, message) {
 }
 
 function handleAmbient(bot, message) {
-    console.log("Ambient message: ", message);
-    if (message.raw_message.type == 'message') {
+    if (message.message_type == 'message') {
         // validate message
         let valid = validator.validate(message.text)
         if (valid < 1) {
