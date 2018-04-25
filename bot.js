@@ -39,8 +39,8 @@ function introduce(bot, message) {
 }
 
 function handleAmbient(bot, message) {
-    if (message.type == 'message') {
-
+    console.log("Ambient message: ", message);
+    if (message.raw_message.type == 'message') {
         // validate message
         let valid = validator.validate(message.text)
         if (valid < 1) {
@@ -136,6 +136,13 @@ function setCallbacks() {
     controller.on('bot_channel_join', introduce)
 }
 
+function setMiddleware() {
+    controller.middleware.normalize.use(function(bot, message, next){
+        message.message_type = message.raw_message.type;
+        next();
+    });
+}
+
 function init() {
     spawnedBot, controller = Botkit.slackbot({
         retry: Infinity,
@@ -143,6 +150,7 @@ function init() {
     });
 
     setCallbacks();
+    setMiddleware();
 }
 
 function spawn() {
