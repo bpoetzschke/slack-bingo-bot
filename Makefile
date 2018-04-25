@@ -6,3 +6,6 @@ init:
 
 default:
 	@ init
+
+test:
+	npm test
