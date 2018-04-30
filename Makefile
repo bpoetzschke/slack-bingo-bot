@@ -1,8 +1,11 @@
 clean:
-	rm -rf node_modules package-lock.json
+	rm -rf node_modules
 
 init:
 	npm i
 
 default:
 	@ init
+
+test:
+	npm test
